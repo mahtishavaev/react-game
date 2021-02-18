@@ -1,4 +1,6 @@
 import { createGlobalStyle } from "styled-components";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
 import { GamePage } from "./view/GamePage/GamePage";
 
 const GlobalStyle = createGlobalStyle`
@@ -11,10 +13,10 @@ const GlobalStyle = createGlobalStyle`
 
 function App() {
   return (
-    <>
+    <Provider store={store}>
       <GlobalStyle />
       <GamePage />
-    </>
+    </Provider>
   );
 }
 
