@@ -26,10 +26,16 @@ const CardImage = styled.img<{ type: "front" | "back" }>`
   ${(props) => props.type === "front" && "transform: rotateY(180deg);"}
 `;
 
-export const Card: FC<{ cardNumber: string }> = ({ cardNumber }) => {
+type CardPropsType = {
+  cardNumber: string;
+  flipped: boolean;
+  visible: boolean;
+};
+
+export const Card: FC<CardPropsType> = ({ cardNumber, flipped, visible }) => {
   return (
     <CardWrapper>
-      <CardItem flipped={false} visible>
+      <CardItem flipped={flipped} visible={visible}>
         <CardImage
           draggable="false"
           type="front"

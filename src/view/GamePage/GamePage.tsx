@@ -1,4 +1,8 @@
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
+import { useThunkDispatch } from "../../hooks/useThunkDispatch";
+import { getGameBoard, createGameBoard } from "../../redux/gameBoardSlice";
 import { Container } from "../common/Container";
 import { Card } from "./Card";
 
@@ -7,14 +11,24 @@ const GameBoard = styled.div`
   flex-wrap: wrap;
 `;
 
-const cards = ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1"];
-
 export const GamePage = () => {
+  const cards = useSelector(getGameBoard);
+  const dispatch = useThunkDispatch();
+
+  useEffect(() => {
+    dispatch(createGameBoard());
+  }, []);
+
   return (
     <Container>
       <GameBoard>
         {cards.map((card, index) => (
-          <Card key={card + index} cardNumber={card} />
+          <Card
+            key={card.number + index}
+            cardNumber={card.number}
+            visible={card.visible}
+            flipped={card.flipped}
+          />
         ))}
       </GameBoard>
     </Container>
