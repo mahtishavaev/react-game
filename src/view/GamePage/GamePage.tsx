@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { useThunkDispatch } from "../../hooks/useThunkDispatch";
-import { getGameBoard, createGameBoard } from "../../redux/gameBoardSlice";
+import { cardClicked, getGameBoard, startNewGame } from "../../redux/gameBoardSlice";
 import { Container } from "../common/Container";
 import { Card } from "./Card";
 
@@ -16,7 +16,7 @@ export const GamePage = () => {
   const dispatch = useThunkDispatch();
 
   useEffect(() => {
-    dispatch(createGameBoard());
+    dispatch(startNewGame());
   }, []);
 
   return (
@@ -24,6 +24,7 @@ export const GamePage = () => {
       <GameBoard>
         {cards.map((card, index) => (
           <Card
+            onClick={() => dispatch(cardClicked(index))}
             key={card.number + index}
             cardNumber={card.number}
             visible={card.visible}

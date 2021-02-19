@@ -30,12 +30,13 @@ type CardPropsType = {
   cardNumber: string;
   flipped: boolean;
   visible: boolean;
+  onClick: () => void;
 };
 
-export const Card: FC<CardPropsType> = ({ cardNumber, flipped, visible }) => {
+export const Card: FC<CardPropsType> = ({ cardNumber, flipped, visible, onClick }) => {
   return (
     <CardWrapper>
-      <CardItem flipped={flipped} visible={visible}>
+      <CardItem flipped={flipped} visible={visible} onClick={onClick}>
         <CardImage
           draggable="false"
           type="front"
