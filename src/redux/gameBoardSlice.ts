@@ -1,4 +1,11 @@
-import { addFlippedCard, resetFlippedCards, startGame } from "./gameInfoSlice";
+import {
+  addFlippedCard,
+  changeGameStatus,
+  decreaseRemainingCardsNumber,
+  increaseMovesCounterValue,
+  resetFlippedCards,
+  startGame,
+} from "./gameInfoSlice";
 import { AppDispatch, AppState } from "./store";
 
 //types
@@ -67,8 +74,7 @@ export const cardClicked = (cardIndex: number) => (
   dispatch: AppDispatch,
   getState: () => AppState
 ) => {
-  const isStarted = getState().gameInfo.isStarted;
-  if (!isStarted) return;
+  if (getState().gameInfo.gameStatus !== "started") return;
   const { flippedCards } = getState().gameInfo;
   const clickedCardNumber = getState().gameBoard[cardIndex].number;
   if (flippedCards.length === 0) {
@@ -82,19 +88,27 @@ export const cardClicked = (cardIndex: number) => (
       if (flippedCards[0].number === flippedCards[1].number) {
         dispatch(hideCard(flippedCards[0].id));
         dispatch(hideCard(flippedCards[1].id));
-      } else {
-        dispatch(unFlipCard(flippedCards[0].id));
-        dispatch(unFlipCard(flippedCards[1].id));
+        dispatch(decreaseRemainingCardsNumber());
       }
+      dispatch(unFlipAllCards());
       dispatch(resetFlippedCards());
+      dispatch(increaseMovesCounterValue());
+      if (getState().gameInfo.cardsLeft === 0) dispatch(changeGameStatus("finished"));
     }, 1500);
   }
 };
 
 export const startNewGame = () => (dispatch: AppDispatch) => {
-  const numberOfCards = 18;
+  const numberOfCards = 6;
+  dispatch(changeGameStatus("starting"));
   dispatch(createGameBoard(numberOfCards));
-  dispatch(startGame(numberOfCards));
+  setTimeout(() => {
+    dispatch(flipAllCards());
+    setTimeout(() => {
+      dispatch(unFlipAllCards());
+      dispatch(startGame(numberOfCards));
+    }, 3000);
+  }, 1000);
 };
 
 //actions

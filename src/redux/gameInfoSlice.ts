@@ -1,4 +1,5 @@
-import { AppDispatch } from "./store";
+import { act } from "react-dom/test-utils";
+import { AppDispatch, AppState } from "./store";
 
 //types
 type CardType = {
@@ -6,19 +7,21 @@ type CardType = {
   id: number;
 };
 
+type GameStatusType = "init" | "starting" | "started" | "finished";
+
 export type GameInfoState = {
-  isStarted: boolean;
-  isFinished: boolean;
+  gameStatus: GameStatusType;
   flippedCards: CardType[];
   cardsLeft: number;
+  movesCounter: number;
 };
 
 //initial state
 const initState: GameInfoState = {
-  isStarted: false,
-  isFinished: false,
+  gameStatus: "init",
   flippedCards: [],
   cardsLeft: 0,
+  movesCounter: 0,
 };
 
 // reducer
@@ -29,10 +32,10 @@ export const gameInfoReducer = (
   switch (action.type) {
     case "gameInfo/startGame":
       return {
-        isStarted: true,
-        isFinished: false,
+        gameStatus: "started",
         flippedCards: [],
         cardsLeft: action.payload,
+        movesCounter: 0,
       };
     case "gameInfo/addFlippedCard":
       return {
@@ -49,6 +52,10 @@ export const gameInfoReducer = (
         ...state,
         cardsLeft: state.cardsLeft - 2,
       };
+    case "gameInfo/changeGameStatus":
+      return { ...state, gameStatus: action.payload };
+    case "gameInfo/increaseMovesCounterValue":
+      return { ...state, movesCounter: state.movesCounter + 1 };
     default:
       return state;
   }
@@ -69,8 +76,20 @@ export const resetFlippedCards = () => ({ type: "gameInfo/resetFlippedCards" } a
 export const decreaseRemainingCardsNumber = () =>
   ({ type: "gameInfo/decreaseRemainingCardsNumber" } as const);
 
+export const changeGameStatus = (status: GameStatusType) =>
+  ({ type: "gameInfo/changeGameStatus", payload: status } as const);
+
+export const increaseMovesCounterValue = () =>
+  ({ type: "gameInfo/increaseMovesCounterValue" } as const);
+
 export type GameInfoActions =
   | ReturnType<typeof startGame>
   | ReturnType<typeof addFlippedCard>
   | ReturnType<typeof resetFlippedCards>
-  | ReturnType<typeof decreaseRemainingCardsNumber>;
+  | ReturnType<typeof decreaseRemainingCardsNumber>
+  | ReturnType<typeof changeGameStatus>
+  | ReturnType<typeof increaseMovesCounterValue>;
+
+//selectors
+export const getGameStatus = (state: AppState) => state.gameInfo.gameStatus;
+export const getMovesCounterValue = (state: AppState) => state.gameInfo.movesCounter;

@@ -9,6 +9,9 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
   }
+  body{
+    background:#F0F0F0;
+  }
 `;
 
 function App() {
