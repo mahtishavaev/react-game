@@ -1,21 +1,24 @@
 import { AppDispatch } from "./store";
 
 //types
+type CardType = {
+  number: string;
+  id: number;
+};
+
 export type GameInfoState = {
   isStarted: boolean;
   isFinished: boolean;
-  flippedCardsCount: number;
+  flippedCards: CardType[];
   cardsLeft: number;
-  firstFlippedCardNumber: string;
 };
 
 //initial state
 const initState: GameInfoState = {
   isStarted: false,
   isFinished: false,
-  flippedCardsCount: 0,
+  flippedCards: [],
   cardsLeft: 0,
-  firstFlippedCardNumber: "",
 };
 
 // reducer
@@ -28,29 +31,23 @@ export const gameInfoReducer = (
       return {
         isStarted: true,
         isFinished: false,
-        flippedCardsCount: 0,
+        flippedCards: [],
         cardsLeft: action.payload,
-        firstFlippedCardNumber: "",
       };
-    case "gameInfo/increaseFlippedCardsCount":
+    case "gameInfo/addFlippedCard":
       return {
         ...state,
-        flippedCardsCount: state.flippedCardsCount + 1,
+        flippedCards: [...state.flippedCards, action.payload],
       };
-    case "gameInfo/resetFlippedCardsCount":
+    case "gameInfo/resetFlippedCards":
       return {
         ...state,
-        flippedCardsCount: 0,
+        flippedCards: [],
       };
-    case "gameInfo/decreaseRemainingCardsCount":
+    case "gameInfo/decreaseRemainingCardsNumber":
       return {
         ...state,
         cardsLeft: state.cardsLeft - 2,
-      };
-    case "gameInfo/setFirstFlippedCardNumber":
-      return {
-        ...state,
-        firstFlippedCardNumber: action.payload,
       };
     default:
       return state;
@@ -61,23 +58,19 @@ export const gameInfoReducer = (
 export const testThunk = () => (dispatch: AppDispatch) => {};
 
 //actions
-export const startGame = (cardsCount: number) =>
-  ({ type: "gameInfo/startGame", payload: cardsCount } as const);
+export const startGame = (numberOfCards: number) =>
+  ({ type: "gameInfo/startGame", payload: numberOfCards } as const);
 
-export const increaseFlippedCardsCount = () =>
-  ({ type: "gameInfo/increaseFlippedCardsCount" } as const);
+export const addFlippedCard = (card: CardType) =>
+  ({ type: "gameInfo/addFlippedCard", payload: card } as const);
 
-export const resetFlippedCardsCount = () => ({ type: "gameInfo/resetFlippedCardsCount" } as const);
+export const resetFlippedCards = () => ({ type: "gameInfo/resetFlippedCards" } as const);
 
-export const decreaseRemainingCardsCount = () =>
-  ({ type: "gameInfo/decreaseRemainingCardsCount" } as const);
-
-export const setFirstFlippedCardNumber = (cardNumber: string) =>
-  ({ type: "gameInfo/setFirstFlippedCardNumber", payload: cardNumber } as const);
+export const decreaseRemainingCardsNumber = () =>
+  ({ type: "gameInfo/decreaseRemainingCardsNumber" } as const);
 
 export type GameInfoActions =
   | ReturnType<typeof startGame>
-  | ReturnType<typeof increaseFlippedCardsCount>
-  | ReturnType<typeof resetFlippedCardsCount>
-  | ReturnType<typeof setFirstFlippedCardNumber>
-  | ReturnType<typeof decreaseRemainingCardsCount>;
+  | ReturnType<typeof addFlippedCard>
+  | ReturnType<typeof resetFlippedCards>
+  | ReturnType<typeof decreaseRemainingCardsNumber>;

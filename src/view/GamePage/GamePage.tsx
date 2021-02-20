@@ -25,7 +25,7 @@ export const GamePage = () => {
         {cards.map((card, index) => (
           <Card
             onClick={() => dispatch(cardClicked(index))}
-            key={card.number + index}
+            key={index}
             cardNumber={card.number}
             visible={card.visible}
             flipped={card.flipped}
