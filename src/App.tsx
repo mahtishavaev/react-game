@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import { GamePage } from "./view/GamePage/GamePage";
@@ -14,12 +14,18 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+const AppInner = styled.div`
+  min-height: 100vh;
+`;
+
 function App() {
   return (
-    <Provider store={store}>
-      <GlobalStyle />
-      <GamePage />
-    </Provider>
+    <AppInner>
+      <Provider store={store}>
+        <GlobalStyle />
+        <GamePage />
+      </Provider>
+    </AppInner>
   );
 }
 

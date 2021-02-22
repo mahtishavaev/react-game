@@ -14,6 +14,7 @@ export type GameInfoState = {
   flippedCards: CardType[];
   cardsLeft: number;
   movesCounter: number;
+  fullScreen: boolean;
 };
 
 //initial state
@@ -22,6 +23,7 @@ const initState: GameInfoState = {
   flippedCards: [],
   cardsLeft: 0,
   movesCounter: 0,
+  fullScreen: false,
 };
 
 // reducer
@@ -36,6 +38,7 @@ export const gameInfoReducer = (
         flippedCards: [],
         cardsLeft: action.payload,
         movesCounter: 0,
+        fullScreen: state.fullScreen,
       };
     case "gameInfo/addFlippedCard":
       return {
@@ -56,13 +59,22 @@ export const gameInfoReducer = (
       return { ...state, gameStatus: action.payload };
     case "gameInfo/increaseMovesCounterValue":
       return { ...state, movesCounter: state.movesCounter + 1 };
+    case "gameInfo/changeFullScreenState":
+      return { ...state, fullScreen: !state.fullScreen };
     default:
       return state;
   }
 };
 
 //thunks
-export const testThunk = () => (dispatch: AppDispatch) => {};
+export const fullScreenClicked = (ref: HTMLDivElement) => (
+  dispatch: AppDispatch,
+  getState: () => AppState
+) => {
+  const isFullScreen = getState().gameInfo.fullScreen;
+  isFullScreen ? document.exitFullscreen() : ref.requestFullscreen();
+  dispatch(changeFullScreenState());
+};
 
 //actions
 export const startGame = (numberOfCards: number) =>
@@ -82,14 +94,18 @@ export const changeGameStatus = (status: GameStatusType) =>
 export const increaseMovesCounterValue = () =>
   ({ type: "gameInfo/increaseMovesCounterValue" } as const);
 
+const changeFullScreenState = () => ({ type: "gameInfo/changeFullScreenState" } as const);
+
 export type GameInfoActions =
   | ReturnType<typeof startGame>
   | ReturnType<typeof addFlippedCard>
   | ReturnType<typeof resetFlippedCards>
   | ReturnType<typeof decreaseRemainingCardsNumber>
   | ReturnType<typeof changeGameStatus>
-  | ReturnType<typeof increaseMovesCounterValue>;
+  | ReturnType<typeof increaseMovesCounterValue>
+  | ReturnType<typeof changeFullScreenState>;
 
 //selectors
 export const getGameStatus = (state: AppState) => state.gameInfo.gameStatus;
 export const getMovesCounterValue = (state: AppState) => state.gameInfo.movesCounter;
+export const getFullScreenState = (state: AppState) => state.gameInfo.fullScreen;

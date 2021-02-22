@@ -1,10 +1,10 @@
 import { Howler } from "howler";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { useThunkDispatch } from "../../hooks/useThunkDispatch";
 import { startNewGame } from "../../redux/gameBoardSlice";
-import { getMovesCounterValue } from "../../redux/gameInfoSlice";
+import { getFullScreenState, getMovesCounterValue } from "../../redux/gameInfoSlice";
 import { music } from "../../sound/sounds";
 
 const GameBarInner = styled.div`
@@ -50,18 +50,29 @@ const MovesLabel = styled.span`
   font-weight: 700;
 `;
 
-export const GameBar = () => {
-  const dispatch = useThunkDispatch();
+type GameBarPropsTypes = {
+  onFullScreenClicked: () => void;
+};
+
+export const GameBar: FC<GameBarPropsTypes> = ({ onFullScreenClicked }) => {
   const movesCounter = useSelector(getMovesCounterValue);
+  const isFullScreen = useSelector(getFullScreenState);
+
+  const dispatch = useThunkDispatch();
+
   const [mute, setMute] = useState(true);
+
   useEffect(() => {
     Howler.mute(mute);
   }, [mute]);
+
   return (
     <GameBarInner>
       <ButtonsWrapper>
         <Button onClick={() => dispatch(startNewGame())}>New Game</Button>
-        <Button>Full Screen</Button>
+        <Button onClick={onFullScreenClicked}>
+          {isFullScreen ? "Normal Screen" : "Full Screen"}
+        </Button>
         <Button>Settings</Button>
         <Button onClick={() => setMute(!mute)}>{mute ? "Unmute" : "Mute"}</Button>
       </ButtonsWrapper>
