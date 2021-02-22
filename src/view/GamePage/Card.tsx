@@ -18,6 +18,7 @@ const CardItem = styled.div<{ flipped?: boolean; visible: boolean }>`
 `;
 
 const CardImage = styled.img<{ type: "front" | "back" }>`
+  backface-visibility: hidden;
   position: absolute;
   height: 100%;
   width: 100%;

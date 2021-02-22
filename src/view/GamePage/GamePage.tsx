@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { useThunkDispatch } from "../../hooks/useThunkDispatch";
 import { cardClicked, getGameBoard, startNewGame } from "../../redux/gameBoardSlice";
 import { getGameStatus } from "../../redux/gameInfoSlice";
+import { music } from "../../sound/sounds";
 import { Container } from "../common/Container";
 import { Card } from "./Card";
 import { GameBar } from "./GameBar";
@@ -31,6 +32,7 @@ export const GamePage = () => {
 
   useEffect(() => {
     dispatch(startNewGame());
+    music.play();
   }, []);
 
   return (

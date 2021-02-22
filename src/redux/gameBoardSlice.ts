@@ -1,3 +1,4 @@
+import { correctSound, flipSound, victorySound } from "../sound/sounds";
 import {
   addFlippedCard,
   changeGameStatus,
@@ -75,6 +76,7 @@ export const cardClicked = (cardIndex: number) => (
   getState: () => AppState
 ) => {
   if (getState().gameInfo.gameStatus !== "started") return;
+  flipSound.play();
   const { flippedCards } = getState().gameInfo;
   const clickedCardNumber = getState().gameBoard[cardIndex].number;
   if (flippedCards.length === 0) {
@@ -89,11 +91,16 @@ export const cardClicked = (cardIndex: number) => (
         dispatch(hideCard(flippedCards[0].id));
         dispatch(hideCard(flippedCards[1].id));
         dispatch(decreaseRemainingCardsNumber());
+        if (getState().gameInfo.cardsLeft === 0) {
+          dispatch(changeGameStatus("finished"));
+          victorySound.play();
+        } else {
+          correctSound.play();
+        }
       }
       dispatch(unFlipAllCards());
       dispatch(resetFlippedCards());
       dispatch(increaseMovesCounterValue());
-      if (getState().gameInfo.cardsLeft === 0) dispatch(changeGameStatus("finished"));
     }, 1500);
   }
 };

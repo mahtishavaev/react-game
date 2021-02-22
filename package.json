@@ -12,6 +12,7 @@
     "@types/react-dom": "^17.0.1",
     "@types/react-redux": "^7.1.16",
     "@types/styled-components": "^5.1.7",
+    "howler": "^2.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-redux": "^7.2.2",
@@ -46,5 +47,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/howler": "^2.2.1"
   }
 }
