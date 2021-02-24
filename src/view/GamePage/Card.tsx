@@ -10,7 +10,7 @@ const CardWrapper = styled.div`
 const CardItem = styled.div<{ flipped?: boolean; visible: boolean }>`
   padding-top: 125%;
   position: relative;
-  transition: transform 0.5s;
+  transition: transform 0.3s;
   transform-style: preserve-3d;
   cursor: pointer;
   ${(props) => props.flipped && "transform: rotateY(180deg);"}

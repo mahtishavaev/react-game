@@ -4,14 +4,16 @@ import styled from "styled-components";
 import { useThunkDispatch } from "../../hooks/useThunkDispatch";
 import { cardClicked, getGameBoard, startNewGame } from "../../redux/gameBoardSlice";
 import { fullScreenClicked, getGameStatus } from "../../redux/gameInfoSlice";
-import { music } from "../../sound/sounds";
+import { getMusicVolume, getSoundsVolume, areSettingsOpen } from "../../redux/settingsSlice";
+import { correctSound, flipSound, music, victorySound } from "../../sound/sounds";
 import { Container } from "../common/Container";
 import { Card } from "./Card";
 import { GameBar } from "./GameBar";
+import { Settings } from "./Settings";
 
 const GamePageInner = styled.div`
   background: #f0f0f0;
-  margin-top: 50px;
+  padding-top: 50px;
 `;
 
 const GameBoard = styled.div`
@@ -34,6 +36,9 @@ const FinishMessage = styled.div`
 export const GamePage = () => {
   const cards = useSelector(getGameBoard);
   const gameStatus = useSelector(getGameStatus);
+  const musicVolume = useSelector(getMusicVolume);
+  const soundsVolume = useSelector(getSoundsVolume);
+  const settings = useSelector(areSettingsOpen);
 
   const dispatch = useThunkDispatch();
 
@@ -42,7 +47,20 @@ export const GamePage = () => {
   useEffect(() => {
     dispatch(startNewGame());
     music.play();
+    window.onbeforeunload = function () {
+      console.log("before unload");
+    };
+    return () => {
+      music.stop();
+    };
   }, []);
+
+  useEffect(() => {
+    music.volume(musicVolume);
+    flipSound.volume(soundsVolume);
+    correctSound.volume(soundsVolume);
+    victorySound.volume(soundsVolume);
+  }, [soundsVolume, musicVolume]);
 
   const onFullScreenClicked = () => {
     dispatch(fullScreenClicked(GamePageRef.current));
@@ -65,6 +83,7 @@ export const GamePage = () => {
           {gameStatus === "finished" && <FinishMessage>VICTORY!!!</FinishMessage>}
         </GameBoard>
       </Container>
+      {settings && <Settings />}
     </GamePageInner>
   );
 };

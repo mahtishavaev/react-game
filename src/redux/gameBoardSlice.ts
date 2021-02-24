@@ -76,13 +76,15 @@ export const cardClicked = (cardIndex: number) => (
   getState: () => AppState
 ) => {
   if (getState().gameInfo.gameStatus !== "started") return;
-  flipSound.play();
   const { flippedCards } = getState().gameInfo;
   const clickedCardNumber = getState().gameBoard[cardIndex].number;
+  const { speed } = getState().settings;
   if (flippedCards.length === 0) {
+    flipSound.play();
     dispatch(flipCard(cardIndex));
     dispatch(addFlippedCard({ number: clickedCardNumber, id: cardIndex }));
   } else if (flippedCards.length === 1) {
+    flipSound.play();
     dispatch(flipCard(cardIndex));
     dispatch(addFlippedCard({ number: clickedCardNumber, id: cardIndex }));
     setTimeout(() => {
@@ -101,21 +103,25 @@ export const cardClicked = (cardIndex: number) => (
       dispatch(unFlipAllCards());
       dispatch(resetFlippedCards());
       dispatch(increaseMovesCounterValue());
-    }, 1500);
+    }, speed);
   }
 };
 
-export const startNewGame = () => (dispatch: AppDispatch) => {
-  const numberOfCards = 6;
+export const startNewGame = () => (dispatch: AppDispatch, getState: () => AppState) => {
+  const { numberOfCards, speed, showCardsAtStart } = getState().settings;
   dispatch(changeGameStatus("starting"));
   dispatch(createGameBoard(numberOfCards));
-  setTimeout(() => {
-    dispatch(flipAllCards());
+  if (showCardsAtStart) {
     setTimeout(() => {
-      dispatch(unFlipAllCards());
-      dispatch(startGame(numberOfCards));
-    }, 3000);
-  }, 1000);
+      dispatch(flipAllCards());
+      setTimeout(() => {
+        dispatch(unFlipAllCards());
+        dispatch(startGame(numberOfCards));
+      }, speed + 500);
+    }, 500);
+  } else {
+    dispatch(startGame(numberOfCards));
+  }
 };
 
 //actions

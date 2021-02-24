@@ -1,11 +1,13 @@
 import { Howler } from "howler";
-import { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { useThunkDispatch } from "../../hooks/useThunkDispatch";
 import { startNewGame } from "../../redux/gameBoardSlice";
 import { getFullScreenState, getMovesCounterValue } from "../../redux/gameInfoSlice";
+import { areSoundsMute, muteSounds, openSettings } from "../../redux/settingsSlice";
 import { music } from "../../sound/sounds";
+import { Button } from "../common/Button";
 
 const GameBarInner = styled.div`
   display: flex;
@@ -13,24 +15,6 @@ const GameBarInner = styled.div`
 `;
 
 const ButtonsWrapper = styled.div``;
-const Button = styled.button`
-  border: none;
-  outline: none;
-  background-color: #4a90e2;
-  color: #ffffff;
-  font-size: 14px;
-  border-radius: 5px;
-  padding: 10px 20px;
-  min-width: 100px;
-  cursor: pointer;
-  transition: box-shadow 0.2s;
-  &:hover {
-    box-shadow: 0 0 10px 1px #808080;
-  }
-  & + & {
-    margin-left: 10px;
-  }
-`;
 const MovesCounter = styled.div`
   margin-left: auto;
   display: flex;
@@ -57,10 +41,11 @@ type GameBarPropsTypes = {
 export const GameBar: FC<GameBarPropsTypes> = ({ onFullScreenClicked }) => {
   const movesCounter = useSelector(getMovesCounterValue);
   const isFullScreen = useSelector(getFullScreenState);
+  const mute = useSelector(areSoundsMute);
 
   const dispatch = useThunkDispatch();
 
-  const [mute, setMute] = useState(true);
+  // const [mute, setMute] = useState(true);
 
   useEffect(() => {
     Howler.mute(mute);
@@ -73,8 +58,8 @@ export const GameBar: FC<GameBarPropsTypes> = ({ onFullScreenClicked }) => {
         <Button onClick={onFullScreenClicked}>
           {isFullScreen ? "Normal Screen" : "Full Screen"}
         </Button>
-        <Button>Settings</Button>
-        <Button onClick={() => setMute(!mute)}>{mute ? "Unmute" : "Mute"}</Button>
+        <Button onClick={() => dispatch(openSettings())}>Settings</Button>
+        <Button onClick={() => dispatch(muteSounds(!mute))}>{mute ? "Unmute" : "Mute"}</Button>
       </ButtonsWrapper>
       <MovesCounter>
         <MovesNumber>{movesCounter}</MovesNumber>
