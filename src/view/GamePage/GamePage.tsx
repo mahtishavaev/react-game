@@ -2,7 +2,13 @@ import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { useThunkDispatch } from "../../hooks/useThunkDispatch";
-import { cardClicked, getGameBoard, startNewGame } from "../../redux/gameBoardSlice";
+import {
+  cardClicked,
+  getGameBoard,
+  loadFromLocalStorage,
+  saveToLocalStorage,
+  startNewGame,
+} from "../../redux/gameBoardSlice";
 import { fullScreenClicked, getGameStatus } from "../../redux/gameInfoSlice";
 import { getMusicVolume, getSoundsVolume, areSettingsOpen } from "../../redux/settingsSlice";
 import { correctSound, flipSound, music, victorySound } from "../../sound/sounds";
@@ -45,10 +51,10 @@ export const GamePage = () => {
   const GamePageRef = useRef<HTMLDivElement>(null!);
 
   useEffect(() => {
-    dispatch(startNewGame());
+    dispatch(loadFromLocalStorage());
     music.play();
     window.onbeforeunload = function () {
-      console.log("before unload");
+      dispatch(saveToLocalStorage());
     };
     return () => {
       music.stop();

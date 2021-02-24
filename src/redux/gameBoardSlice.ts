@@ -5,8 +5,10 @@ import {
   decreaseRemainingCardsNumber,
   increaseMovesCounterValue,
   resetFlippedCards,
+  setGameInfoData,
   startGame,
 } from "./gameInfoSlice";
+import { setSettings } from "./settingsSlice";
 import { AppDispatch, AppState } from "./store";
 
 //types
@@ -121,6 +123,43 @@ export const startNewGame = () => (dispatch: AppDispatch, getState: () => AppSta
     }, 500);
   } else {
     dispatch(startGame(numberOfCards));
+  }
+};
+
+export const saveToLocalStorage = () => (dispatch: AppDispatch, getState: () => AppState) => {
+  const { gameBoard } = getState();
+  const { cardsLeft, flippedCards, gameStatus, movesCounter } = getState().gameInfo;
+  const { musicVolume, soundsVolume, numberOfCards, speed, showCardsAtStart } = getState().settings;
+  localStorage.setItem("ms-game-board", JSON.stringify(gameBoard));
+  localStorage.setItem(
+    "ms-game-info",
+    JSON.stringify({ cardsLeft, flippedCards, gameStatus, movesCounter })
+  );
+  localStorage.setItem(
+    "ms-game-settings",
+    JSON.stringify({ musicVolume, soundsVolume, numberOfCards, speed, showCardsAtStart })
+  );
+};
+
+export const loadFromLocalStorage = () => (dispatch: AppDispatch) => {
+  const lsSettings = localStorage.getItem("ms-game-settings");
+  if (lsSettings !== null) {
+    const { musicVolume, soundsVolume, numberOfCards, speed, showCardsAtStart } = JSON.parse(
+      lsSettings
+    );
+    dispatch(setSettings(musicVolume, soundsVolume, numberOfCards, speed, showCardsAtStart));
+  }
+  const lsGameInfo = localStorage.getItem("ms-game-info");
+  if (lsGameInfo !== null) {
+    const { cardsLeft, flippedCards, gameStatus, movesCounter } = JSON.parse(lsGameInfo);
+    dispatch(setGameInfoData(cardsLeft, flippedCards, gameStatus, movesCounter));
+  }
+  const lsGameBoard = localStorage.getItem("ms-game-board");
+  if (lsGameBoard !== null) {
+    const gameBoard = JSON.parse(lsGameBoard);
+    dispatch(setGameBoardData(gameBoard));
+  } else {
+    dispatch(startNewGame());
   }
 };
 

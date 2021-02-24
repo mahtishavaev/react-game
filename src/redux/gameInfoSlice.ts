@@ -61,6 +61,14 @@ export const gameInfoReducer = (
       return { ...state, movesCounter: state.movesCounter + 1 };
     case "gameInfo/changeFullScreenState":
       return { ...state, fullScreen: !state.fullScreen };
+    case "gameInfo/setGameInfoData":
+      return {
+        ...state,
+        cardsLeft: action.payload.cardsLeft,
+        flippedCards: action.payload.flippedCards,
+        gameStatus: action.payload.gameStatus,
+        movesCounter: action.payload.movesCounter,
+      };
     default:
       return state;
   }
@@ -96,6 +104,22 @@ export const increaseMovesCounterValue = () =>
 
 const changeFullScreenState = () => ({ type: "gameInfo/changeFullScreenState" } as const);
 
+export const setGameInfoData = (
+  cardsLeft: number,
+  flippedCards: CardType[],
+  gameStatus: GameStatusType,
+  movesCounter: number
+) =>
+  ({
+    type: "gameInfo/setGameInfoData",
+    payload: {
+      cardsLeft,
+      flippedCards,
+      gameStatus,
+      movesCounter,
+    },
+  } as const);
+
 export type GameInfoActions =
   | ReturnType<typeof startGame>
   | ReturnType<typeof addFlippedCard>
@@ -103,7 +127,8 @@ export type GameInfoActions =
   | ReturnType<typeof decreaseRemainingCardsNumber>
   | ReturnType<typeof changeGameStatus>
   | ReturnType<typeof increaseMovesCounterValue>
-  | ReturnType<typeof changeFullScreenState>;
+  | ReturnType<typeof changeFullScreenState>
+  | ReturnType<typeof setGameInfoData>;
 
 //selectors
 export const getGameStatus = (state: AppState) => state.gameInfo.gameStatus;
