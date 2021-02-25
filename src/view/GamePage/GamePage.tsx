@@ -58,6 +58,7 @@ export const GamePage = () => {
     };
     return () => {
       music.stop();
+      dispatch(saveToLocalStorage());
     };
   }, []);
 

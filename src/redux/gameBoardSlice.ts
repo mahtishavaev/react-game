@@ -78,8 +78,10 @@ export const cardClicked = (cardIndex: number) => (
   getState: () => AppState
 ) => {
   if (getState().gameInfo.gameStatus !== "started") return;
+  const clickedCard = getState().gameBoard[cardIndex];
+  if (clickedCard.flipped || !clickedCard.visible) return;
   const { flippedCards } = getState().gameInfo;
-  const clickedCardNumber = getState().gameBoard[cardIndex].number;
+  const clickedCardNumber = clickedCard.number;
   const { speed } = getState().settings;
   if (flippedCards.length === 0) {
     flipSound.play();

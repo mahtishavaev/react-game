@@ -3,6 +3,7 @@ import React, { FC, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { useThunkDispatch } from "../../hooks/useThunkDispatch";
+import { startAutoplay } from "../../redux/autoplaySlice";
 import { startNewGame } from "../../redux/gameBoardSlice";
 import { getFullScreenState, getMovesCounterValue } from "../../redux/gameInfoSlice";
 import { areSoundsMute, muteSounds, openSettings } from "../../redux/settingsSlice";
@@ -55,6 +56,7 @@ export const GameBar: FC<GameBarPropsTypes> = ({ onFullScreenClicked }) => {
     <GameBarInner>
       <ButtonsWrapper>
         <Button onClick={() => dispatch(startNewGame())}>New Game</Button>
+        <Button onClick={() => dispatch(startAutoplay())}>Autoplay</Button>
         <Button onClick={onFullScreenClicked}>
           {isFullScreen ? "Normal Screen" : "Full Screen"}
         </Button>
