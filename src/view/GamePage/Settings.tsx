@@ -1,14 +1,9 @@
+import { Howler } from "howler";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { useThunkDispatch } from "../../hooks/useThunkDispatch";
-import {
-  closeSettings,
-  getAllSettings,
-  getMusicVolume,
-  getSoundsVolume,
-  SaveSettings,
-} from "../../redux/settingsSlice";
+import { closeSettings, getAllSettings, SaveSettings } from "../../redux/settingsSlice";
 import { music } from "../../sound/sounds";
 import { Button } from "../common/Button";
 
@@ -37,7 +32,6 @@ const SettingsTitle = styled.h2`
 
 const InputWrapper = styled.div`
   padding: 10px;
-  border: 1px solid #000;
   display: flex;
   align-items: center;
 `;
@@ -61,6 +55,7 @@ const Label = styled.span`
 
 const Select = styled.select`
   font-size: 16px;
+  font-family: "Roboto", sans-serif;
   padding: 3px;
   width: 100px;
 `;
@@ -84,7 +79,9 @@ export const Settings = () => {
 
   useEffect(() => {
     music.volume(musicVolume);
+    Howler.mute(false);
     return () => {
+      Howler.mute(settings.isMute);
       music.volume(settings.musicVolume);
     };
   }, [musicVolume]);

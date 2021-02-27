@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { useThunkDispatch } from "../../hooks/useThunkDispatch";
@@ -7,18 +7,17 @@ import {
   getGameBoard,
   loadFromLocalStorage,
   saveToLocalStorage,
-  startNewGame,
 } from "../../redux/gameBoardSlice";
-import { fullScreenClicked, getGameStatus } from "../../redux/gameInfoSlice";
+import { getGameStatus } from "../../redux/gameInfoSlice";
 import { getMusicVolume, getSoundsVolume, areSettingsOpen } from "../../redux/settingsSlice";
 import { correctSound, flipSound, music, victorySound } from "../../sound/sounds";
 import { Container } from "../common/Container";
 import { Card } from "./Card";
 import { GameBar } from "./GameBar";
 import { Settings } from "./Settings";
+import { WinModal } from "./WinModal";
 
 const GamePageInner = styled.div`
-  background: #f0f0f0;
   padding-top: 50px;
 `;
 
@@ -26,17 +25,7 @@ const GameBoard = styled.div`
   display: flex;
   flex-wrap: wrap;
   position: relative;
-`;
-
-const FinishMessage = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 50px;
-  font-weight: 700;
-  letter-spacing: 5px;
-  color: #d02000;
+  box-shadow: 0 0 15px 1px #d8d5d5;
 `;
 
 export const GamePage = () => {
@@ -47,8 +36,6 @@ export const GamePage = () => {
   const settings = useSelector(areSettingsOpen);
 
   const dispatch = useThunkDispatch();
-
-  const GamePageRef = useRef<HTMLDivElement>(null!);
 
   useEffect(() => {
     dispatch(loadFromLocalStorage());
@@ -69,25 +56,21 @@ export const GamePage = () => {
     victorySound.volume(soundsVolume);
   }, [soundsVolume, musicVolume]);
 
-  const onFullScreenClicked = () => {
-    dispatch(fullScreenClicked(GamePageRef.current));
-  };
-
   return (
-    <GamePageInner ref={GamePageRef}>
+    <GamePageInner>
       <Container>
-        <GameBar onFullScreenClicked={onFullScreenClicked} />
+        <GameBar />
         <GameBoard>
           {cards.map((card, index) => (
             <Card
-              onClick={() => dispatch(cardClicked(index))}
+              onClick={() => dispatch(cardClicked(index, true))}
               key={index}
               cardNumber={card.number}
               visible={card.visible}
               flipped={card.flipped}
             />
           ))}
-          {gameStatus === "finished" && <FinishMessage>VICTORY!!!</FinishMessage>}
+          {gameStatus === "finished" && <WinModal />}
         </GameBoard>
       </Container>
       {settings && <Settings />}

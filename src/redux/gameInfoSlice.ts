@@ -9,12 +9,16 @@ type CardType = {
 
 type GameStatusType = "init" | "starting" | "started" | "finished";
 
+type TimerStatusType = "started" | "stopped";
+
 export type GameInfoState = {
   gameStatus: GameStatusType;
   flippedCards: CardType[];
   cardsLeft: number;
   movesCounter: number;
   fullScreen: boolean;
+  timerValue: number;
+  timerStatus: TimerStatusType;
 };
 
 //initial state
@@ -24,6 +28,8 @@ const initState: GameInfoState = {
   cardsLeft: 0,
   movesCounter: 0,
   fullScreen: false,
+  timerValue: 0,
+  timerStatus: "stopped",
 };
 
 // reducer
@@ -39,6 +45,8 @@ export const gameInfoReducer = (
         cardsLeft: action.payload,
         movesCounter: 0,
         fullScreen: state.fullScreen,
+        timerValue: 0,
+        timerStatus: "stopped",
       };
     case "gameInfo/addFlippedCard":
       return {
@@ -68,20 +76,46 @@ export const gameInfoReducer = (
         flippedCards: action.payload.flippedCards,
         gameStatus: action.payload.gameStatus,
         movesCounter: action.payload.movesCounter,
+        timerStatus: action.payload.timerStatus,
+        timerValue: action.payload.timerValue,
       };
+    case "gameInfo/setTimerStatus":
+      return { ...state, timerStatus: action.payload };
+    case "gameInfo/timerTick":
+      return { ...state, timerValue: state.timerValue + 1 };
     default:
       return state;
   }
 };
 
 //thunks
-export const fullScreenClicked = (ref: HTMLDivElement) => (
-  dispatch: AppDispatch,
-  getState: () => AppState
-) => {
+export const fullScreenClicked = () => (dispatch: AppDispatch, getState: () => AppState) => {
   const isFullScreen = getState().gameInfo.fullScreen;
-  isFullScreen ? document.exitFullscreen() : ref.requestFullscreen();
+  isFullScreen ? document.exitFullscreen() : document.documentElement.requestFullscreen();
   dispatch(changeFullScreenState());
+};
+
+let interval: NodeJS.Timeout;
+
+export const startTimer = () => (dispatch: AppDispatch, getState: () => AppState) => {
+  dispatch(setTimerStatus("started"));
+  interval = setInterval(() => {
+    if (getState().gameInfo.timerStatus === "stopped") clearInterval(interval);
+    dispatch(timerTick());
+  }, 1000);
+};
+
+export const stopTimer = () => (dispatch: AppDispatch, getState: () => AppState) => {
+  clearInterval(interval);
+  dispatch(setTimerStatus("stopped"));
+};
+
+export const resumeTimer = () => (dispatch: AppDispatch, getState: () => AppState) => {
+  dispatch(setTimerStatus("started"));
+  interval = setInterval(() => {
+    if (getState().gameInfo.timerStatus === "stopped") clearInterval(interval);
+    dispatch(timerTick());
+  }, 1000);
 };
 
 //actions
@@ -104,11 +138,18 @@ export const increaseMovesCounterValue = () =>
 
 const changeFullScreenState = () => ({ type: "gameInfo/changeFullScreenState" } as const);
 
+const setTimerStatus = (status: TimerStatusType) =>
+  ({ type: "gameInfo/setTimerStatus", payload: status } as const);
+
+const timerTick = () => ({ type: "gameInfo/timerTick" } as const);
+
 export const setGameInfoData = (
   cardsLeft: number,
   flippedCards: CardType[],
   gameStatus: GameStatusType,
-  movesCounter: number
+  movesCounter: number,
+  timerValue: number,
+  timerStatus: TimerStatusType
 ) =>
   ({
     type: "gameInfo/setGameInfoData",
@@ -117,6 +158,8 @@ export const setGameInfoData = (
       flippedCards,
       gameStatus,
       movesCounter,
+      timerValue,
+      timerStatus,
     },
   } as const);
 
@@ -128,9 +171,12 @@ export type GameInfoActions =
   | ReturnType<typeof changeGameStatus>
   | ReturnType<typeof increaseMovesCounterValue>
   | ReturnType<typeof changeFullScreenState>
+  | ReturnType<typeof setTimerStatus>
+  | ReturnType<typeof timerTick>
   | ReturnType<typeof setGameInfoData>;
 
 //selectors
 export const getGameStatus = (state: AppState) => state.gameInfo.gameStatus;
 export const getMovesCounterValue = (state: AppState) => state.gameInfo.movesCounter;
 export const getFullScreenState = (state: AppState) => state.gameInfo.fullScreen;
+export const getTimerValue = (state: AppState) => state.gameInfo.timerValue;

@@ -10,7 +10,8 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
   }
   body{
-    background:#F0F0F0;
+    background:#FAFAFA;
+    font-family: 'Roboto', sans-serif;
   }
 `;
 

@@ -56,7 +56,7 @@ export const startAutoplay = () => async (dispatch: AppDispatch, getState: () =>
     }
     const openedCards = getState().gameInfo.flippedCards.length;
     if (openedCards === 0) {
-      dispatch(cardClicked(cardIndex));
+      dispatch(cardClicked(cardIndex, false));
       cards[cardIndex].number = getState().gameBoard[cardIndex].number;
     } else if (openedCards === 1) {
       let firstCardNumber = getState().gameInfo.flippedCards[0].number;
@@ -66,7 +66,7 @@ export const startAutoplay = () => async (dispatch: AppDispatch, getState: () =>
         if (el.number === firstCardNumber && el.id !== firstCardIndex) secondCardIndex = el.id;
       });
       if (secondCardIndex !== cardIndex) cardIndex--;
-      dispatch(cardClicked(secondCardIndex));
+      dispatch(cardClicked(secondCardIndex, false));
       cards[secondCardIndex].number = getState().gameBoard[secondCardIndex].number;
     }
     await new Promise((resolve) => {

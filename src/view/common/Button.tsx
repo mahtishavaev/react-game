@@ -1,18 +1,20 @@
 import styled from "styled-components";
 
 export const Button = styled.button`
-  border: none;
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  border-radius: 4px;
   outline: none;
-  background-color: #4a90e2;
-  color: #ffffff;
-  font-size: 14px;
-  border-radius: 5px;
+  background-color: #fff;
+  color: #1a1a1a;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: "Roboto", sans-serif;
   padding: 10px 20px;
-  min-width: 100px;
+  min-width: 80px;
   cursor: pointer;
-  transition: box-shadow 0.2s;
+  transition: background-color 0.2s;
   &:hover {
-    box-shadow: 0 0 10px 1px #808080;
+    background-color: rgba(0, 0, 0, 0.04);
   }
   & + & {
     margin-left: 10px;
