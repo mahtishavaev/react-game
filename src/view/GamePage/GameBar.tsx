@@ -73,10 +73,6 @@ export const GameBar = () => {
 
   const dispatch = useThunkDispatch();
 
-  useEffect(() => {
-    Howler.mute(mute);
-  }, [mute]);
-
   return (
     <GameBarInner>
       <ButtonsWrapper>
