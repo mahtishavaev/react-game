@@ -13,6 +13,9 @@ const TimerInner = styled.span`
   display: inline-flex;
   align-self: center;
   cursor: default;
+  @media (max-width: 767.98px) {
+    margin-left: 0;
+  }
 `;
 
 function secToTime(s: number) {

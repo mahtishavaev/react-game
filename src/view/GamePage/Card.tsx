@@ -1,5 +1,8 @@
+import React from "react";
 import { FC } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
+import { getAutoplayStatus } from "../../redux/autoplaySlice";
 
 const CardWrapper = styled.div`
   width: 16.6666%;
@@ -9,11 +12,12 @@ const CardWrapper = styled.div`
     padding: 5px;
   }
   @media (max-width: 767.98px) {
-    width: 33.3333%;
+    /* width: 33.3333%; */
+    width: 25%;
   }
 `;
 
-const CardItem = styled.div<{ flipped?: boolean; visible: boolean }>`
+const CardItem = styled.div<{ flipped?: boolean; visible: boolean; clickable: boolean }>`
   margin: auto;
   width: 140px;
   height: 140px;
@@ -21,7 +25,7 @@ const CardItem = styled.div<{ flipped?: boolean; visible: boolean }>`
   transition: transform 0.3s;
   transform-style: preserve-3d;
   border: 1px solid gray;
-  cursor: pointer;
+  ${(props) => props.clickable && "cursor: pointer;"}
   ${(props) => props.flipped && "transform: rotateY(180deg);"}
   ${(props) => !props.visible && "visibility: hidden;"}
   @media (max-width: 991.98px) {
@@ -29,12 +33,12 @@ const CardItem = styled.div<{ flipped?: boolean; visible: boolean }>`
     height: 110px;
   }
   @media (max-width: 767.98px) {
-    width: 170px;
-    height: 170px;
+    width: 130px;
+    height: 130px;
   }
   @media (max-width: 575.98px) {
-    width: 140px;
-    height: 140px;
+    width: 100px;
+    height: 100px;
   }
 `;
 
@@ -55,10 +59,11 @@ type CardPropsType = {
   onClick: () => void;
 };
 
-export const Card: FC<CardPropsType> = ({ cardNumber, flipped, visible, onClick }) => {
+export const Card: FC<CardPropsType> = React.memo(({ cardNumber, flipped, visible, onClick }) => {
+  const autoplay = useSelector(getAutoplayStatus);
   return (
     <CardWrapper>
-      <CardItem flipped={flipped} visible={visible} onClick={onClick}>
+      <CardItem flipped={flipped} visible={visible} clickable={!autoplay} onClick={onClick}>
         <CardImage
           draggable="false"
           type="front"
@@ -69,4 +74,4 @@ export const Card: FC<CardPropsType> = ({ cardNumber, flipped, visible, onClick 
       </CardItem>
     </CardWrapper>
   );
-};
+});

@@ -2,14 +2,29 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { useThunkDispatch } from "../../hooks/useThunkDispatch";
+import { setAutoplayStatus } from "../../redux/autoplaySlice";
 import {
   cardClicked,
   getGameBoard,
-  loadFromLocalStorage,
-  saveToLocalStorage,
+  loadGameBoardFromLocalStorage,
+  saveGameBoardToLocalStorage,
 } from "../../redux/gameBoardSlice";
-import { getGameStatus } from "../../redux/gameInfoSlice";
-import { getMusicVolume, getSoundsVolume, areSettingsOpen } from "../../redux/settingsSlice";
+import {
+  getGameStatus,
+  loadGameInfoFromLocalStorage,
+  saveGameInfoToLocalStorage,
+} from "../../redux/gameInfoSlice";
+import {
+  getMusicVolume,
+  getSoundsVolume,
+  areSettingsOpen,
+  loadSettingsFromLocalStorage,
+  saveSettingsToLocalStorage,
+} from "../../redux/settingsSlice";
+import {
+  loadStatisticFromLocalStorage,
+  saveStatisticToLocalStorage,
+} from "../../redux/statisticSlice";
 import { correctSound, flipSound, music, victorySound } from "../../sound/sounds";
 import { Container } from "../common/Container";
 import { Card } from "./Card";
@@ -18,7 +33,8 @@ import { Settings } from "./Settings";
 import { WinModal } from "./WinModal";
 
 const GamePageInner = styled.div`
-  padding-top: 50px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 `;
 
 const GameBoard = styled.div`
@@ -38,14 +54,21 @@ export const GamePage = () => {
   const dispatch = useThunkDispatch();
 
   useEffect(() => {
-    dispatch(loadFromLocalStorage());
-    music.play();
+    dispatch(loadSettingsFromLocalStorage());
+    dispatch(loadGameInfoFromLocalStorage());
+    dispatch(loadGameBoardFromLocalStorage());
+    dispatch(loadStatisticFromLocalStorage());
     window.onbeforeunload = function () {
-      dispatch(saveToLocalStorage());
+      dispatch(saveSettingsToLocalStorage());
+      dispatch(saveGameInfoToLocalStorage());
+      dispatch(saveGameBoardToLocalStorage());
+      dispatch(saveStatisticToLocalStorage());
     };
     return () => {
-      music.stop();
-      dispatch(saveToLocalStorage());
+      dispatch(saveSettingsToLocalStorage());
+      dispatch(saveGameInfoToLocalStorage());
+      dispatch(saveGameBoardToLocalStorage());
+      dispatch(saveStatisticToLocalStorage());
     };
   }, []);
 

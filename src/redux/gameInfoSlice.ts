@@ -1,4 +1,5 @@
 import { act } from "react-dom/test-utils";
+import { setAutoplayStatus } from "./autoplaySlice";
 import { AppDispatch, AppState } from "./store";
 
 //types
@@ -116,6 +117,47 @@ export const resumeTimer = () => (dispatch: AppDispatch, getState: () => AppStat
     if (getState().gameInfo.timerStatus === "stopped") clearInterval(interval);
     dispatch(timerTick());
   }, 1000);
+};
+
+export const saveGameInfoToLocalStorage = () => (
+  dispatch: AppDispatch,
+  getState: () => AppState
+) => {
+  const {
+    cardsLeft,
+    flippedCards,
+    gameStatus,
+    movesCounter,
+    timerValue,
+    timerStatus,
+  } = getState().gameInfo;
+  dispatch(stopTimer());
+  if (getState().autoplay.autoplay) {
+    localStorage.removeItem("ms-game-info");
+  } else {
+    localStorage.setItem(
+      "ms-game-info",
+      JSON.stringify({ cardsLeft, flippedCards, gameStatus, movesCounter, timerValue, timerStatus })
+    );
+  }
+};
+
+export const loadGameInfoFromLocalStorage = () => (dispatch: AppDispatch) => {
+  const lsGameInfo = localStorage.getItem("ms-game-info");
+  if (lsGameInfo !== null) {
+    const {
+      cardsLeft,
+      flippedCards,
+      gameStatus,
+      movesCounter,
+      timerValue,
+      timerStatus,
+    } = JSON.parse(lsGameInfo);
+    dispatch(
+      setGameInfoData(cardsLeft, flippedCards, gameStatus, movesCounter, timerValue, timerStatus)
+    );
+    if (gameStatus === "started") dispatch(resumeTimer());
+  }
 };
 
 //actions

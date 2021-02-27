@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { useThunkDispatch } from "../../hooks/useThunkDispatch";
-import { startAutoplay } from "../../redux/autoplaySlice";
+import { getAutoplayStatus, startAutoplay } from "../../redux/autoplaySlice";
 import { startNewGame } from "../../redux/gameBoardSlice";
 import {
   fullScreenClicked,
@@ -18,12 +18,16 @@ import { Timer } from "./Timer";
 const GameBarInner = styled.div`
   display: flex;
   flex-wrap: wrap;
-  margin: 15px 10px;
+  margin: 15px 0;
 `;
 
 const ButtonsWrapper = styled.div`
   display: flex;
   align-items: center;
+  @media (max-width: 767.98px) {
+    margin-bottom: 20px;
+    width: 100%;
+  }
 `;
 
 const MovesCounter = styled.div`
@@ -65,6 +69,7 @@ export const GameBar = () => {
   const movesCounter = useSelector(getMovesCounterValue);
   const isFullScreen = useSelector(getFullScreenState);
   const mute = useSelector(areSoundsMute);
+  const autoplay = useSelector(getAutoplayStatus);
 
   const dispatch = useThunkDispatch();
 
@@ -75,8 +80,12 @@ export const GameBar = () => {
   return (
     <GameBarInner>
       <ButtonsWrapper>
-        <Button onClick={() => dispatch(startNewGame())}>New Game</Button>
-        <Button onClick={() => dispatch(startAutoplay())}>Autoplay</Button>
+        <Button disabled={autoplay} onClick={() => dispatch(startNewGame())}>
+          New Game
+        </Button>
+        <Button disabled={autoplay} onClick={() => dispatch(startAutoplay())}>
+          Autoplay
+        </Button>
         <Button onClick={() => dispatch(openSettings())}>Settings</Button>
         {mute ? (
           <Icon as={SoundsMuteIcon} onClick={() => dispatch(muteSounds(false))} />

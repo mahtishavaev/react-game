@@ -6,6 +6,7 @@ import { GameBoardState, GameBoardActions } from "./gameBoardSlice";
 import { GameInfoActions, GameInfoState } from "./gameInfoSlice";
 import { rootReducer } from "./rootReducer";
 import { SettingsActions, SettingsState } from "./settingsSlice";
+import { StatisticActions, StatisticState } from "./statisticSlice";
 const composedEnhancer = composeWithDevTools(applyMiddleware(thunk));
 
 export const store: Store<AppState, AppActions> & {
@@ -17,8 +18,14 @@ export type AppState = {
   gameInfo: GameInfoState;
   settings: SettingsState;
   autoplay: AutoplayState;
+  statistic: StatisticState;
 };
 
-export type AppActions = GameBoardActions | GameInfoActions | SettingsActions | AutoplayActions;
+export type AppActions =
+  | GameBoardActions
+  | GameInfoActions
+  | SettingsActions
+  | AutoplayActions
+  | StatisticActions;
 
 export type AppDispatch = ThunkDispatch<AppState, unknown, AppActions>;

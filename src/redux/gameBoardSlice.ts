@@ -1,4 +1,5 @@
 import { correctSound, flipSound, victorySound } from "../sound/sounds";
+import { setAutoplayStatus } from "./autoplaySlice";
 import {
   addFlippedCard,
   changeGameStatus,
@@ -12,6 +13,7 @@ import {
   stopTimer,
 } from "./gameInfoSlice";
 import { setSettings } from "./settingsSlice";
+import { addStatisticRecord, setStatistic } from "./statisticSlice";
 import { AppDispatch, AppState } from "./store";
 
 //types
@@ -102,6 +104,19 @@ export const cardClicked = (cardIndex: number, fromUser: boolean) => (
         if (getState().gameInfo.cardsLeft === 0) {
           dispatch(changeGameStatus("finished"));
           dispatch(stopTimer());
+          const { gameInfo } = getState();
+          const { settings } = getState();
+          if (!getState().autoplay.autoplay) {
+            dispatch(
+              addStatisticRecord({
+                date: new Date(),
+                moves: gameInfo.movesCounter + 1,
+                numberOfCards: settings.numberOfCards,
+                speed: settings.speed,
+                timeSpent: gameInfo.timerValue,
+              })
+            );
+          }
           victorySound.play();
         } else {
           correctSound.play();
@@ -134,51 +149,20 @@ export const startNewGame = () => (dispatch: AppDispatch, getState: () => AppSta
   }
 };
 
-export const saveToLocalStorage = () => (dispatch: AppDispatch, getState: () => AppState) => {
+export const saveGameBoardToLocalStorage = () => (
+  dispatch: AppDispatch,
+  getState: () => AppState
+) => {
   const { gameBoard } = getState();
-  const {
-    cardsLeft,
-    flippedCards,
-    gameStatus,
-    movesCounter,
-    timerValue,
-    timerStatus,
-  } = getState().gameInfo;
-  const { musicVolume, soundsVolume, numberOfCards, speed, showCardsAtStart } = getState().settings;
-  localStorage.setItem("ms-game-board", JSON.stringify(gameBoard));
-  localStorage.setItem(
-    "ms-game-info",
-    JSON.stringify({ cardsLeft, flippedCards, gameStatus, movesCounter, timerValue, timerStatus })
-  );
-  localStorage.setItem(
-    "ms-game-settings",
-    JSON.stringify({ musicVolume, soundsVolume, numberOfCards, speed, showCardsAtStart })
-  );
+  if (getState().autoplay.autoplay) {
+    localStorage.removeItem("ms-game-board");
+    dispatch(setAutoplayStatus(false));
+  } else {
+    localStorage.setItem("ms-game-board", JSON.stringify(gameBoard));
+  }
 };
 
-export const loadFromLocalStorage = () => (dispatch: AppDispatch) => {
-  const lsSettings = localStorage.getItem("ms-game-settings");
-  if (lsSettings !== null) {
-    const { musicVolume, soundsVolume, numberOfCards, speed, showCardsAtStart } = JSON.parse(
-      lsSettings
-    );
-    dispatch(setSettings(musicVolume, soundsVolume, numberOfCards, speed, showCardsAtStart));
-  }
-  const lsGameInfo = localStorage.getItem("ms-game-info");
-  if (lsGameInfo !== null) {
-    const {
-      cardsLeft,
-      flippedCards,
-      gameStatus,
-      movesCounter,
-      timerValue,
-      timerStatus,
-    } = JSON.parse(lsGameInfo);
-    dispatch(
-      setGameInfoData(cardsLeft, flippedCards, gameStatus, movesCounter, timerValue, timerStatus)
-    );
-    if (gameStatus === "started") dispatch(resumeTimer());
-  }
+export const loadGameBoardFromLocalStorage = () => (dispatch: AppDispatch) => {
   const lsGameBoard = localStorage.getItem("ms-game-board");
   if (lsGameBoard !== null) {
     const gameBoard = JSON.parse(lsGameBoard);

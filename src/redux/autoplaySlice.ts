@@ -50,6 +50,7 @@ export const startAutoplay = () => async (dispatch: AppDispatch, getState: () =>
     .map((el, i) => ({ number: "", id: i, hidden: false }));
   let cardIndex = 0;
   while (getState().gameInfo.gameStatus !== "finished") {
+    if (!getState().autoplay.autoplay) break;
     if (!getState().gameBoard[cardIndex].visible) {
       cardIndex++;
       continue;

@@ -5,13 +5,13 @@ export const Button = styled.button`
   border-radius: 4px;
   outline: none;
   background-color: #fff;
-  color: #1a1a1a;
   font-size: 16px;
   font-weight: 500;
   font-family: "Roboto", sans-serif;
   padding: 10px 20px;
   min-width: 80px;
-  cursor: pointer;
+  ${(props) => (props.disabled ? "cursor: not-allowed;" : "cursor: pointer;")}
+  ${(props) => (props.disabled ? "color: #ada9a9;" : "color: #1a1a1a;")}
   transition: background-color 0.2s;
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);

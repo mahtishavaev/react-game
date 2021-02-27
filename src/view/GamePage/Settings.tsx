@@ -18,7 +18,7 @@ const SettingsOverlay = styled.div`
 `;
 
 const SettingsWrapper = styled.div`
-  width: 500px;
+  width: 480px;
   background-color: #fff;
   margin: auto;
   padding: 10px;

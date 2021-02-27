@@ -60,6 +60,26 @@ export const SaveSettings = (
   dispatch(closeSettings());
 };
 
+export const loadSettingsFromLocalStorage = () => (dispatch: AppDispatch) => {
+  const lsSettings = localStorage.getItem("ms-game-settings");
+  if (lsSettings !== null) {
+    const { musicVolume, soundsVolume, numberOfCards, speed, showCardsAtStart } = JSON.parse(
+      lsSettings
+    );
+    dispatch(setSettings(musicVolume, soundsVolume, numberOfCards, speed, showCardsAtStart));
+  }
+};
+
+export const saveSettingsToLocalStorage = () => (
+  dispatch: AppDispatch,
+  getState: () => AppState
+) => {
+  const { musicVolume, soundsVolume, numberOfCards, speed, showCardsAtStart } = getState().settings;
+  localStorage.setItem(
+    "ms-game-settings",
+    JSON.stringify({ musicVolume, soundsVolume, numberOfCards, speed, showCardsAtStart })
+  );
+};
 //actions
 export const openSettings = () => ({ type: "settings/openSettings" } as const);
 
