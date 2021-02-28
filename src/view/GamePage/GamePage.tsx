@@ -7,6 +7,7 @@ import {
   cardClicked,
   getGameBoard,
   loadGameBoardFromLocalStorage,
+  resetCardSelection,
   saveGameBoardToLocalStorage,
 } from "../../redux/gameBoardSlice";
 import {
@@ -14,6 +15,7 @@ import {
   loadGameInfoFromLocalStorage,
   saveGameInfoToLocalStorage,
 } from "../../redux/gameInfoSlice";
+import { keyPressed } from "../../redux/keyboardSlice";
 import {
   getMusicVolume,
   getSoundsVolume,
@@ -64,7 +66,11 @@ export const GamePage = () => {
       dispatch(saveGameBoardToLocalStorage());
       dispatch(saveStatisticToLocalStorage());
     };
+    document.onkeydown = function (e) {
+      dispatch(keyPressed(e.key));
+    };
     return () => {
+      document.onkeydown = null;
       dispatch(saveSettingsToLocalStorage());
       dispatch(saveGameInfoToLocalStorage());
       dispatch(saveGameBoardToLocalStorage());
@@ -86,11 +92,15 @@ export const GamePage = () => {
         <GameBoard>
           {cards.map((card, index) => (
             <Card
-              onClick={() => dispatch(cardClicked(index, true))}
+              onClick={() => {
+                dispatch(resetCardSelection());
+                dispatch(cardClicked(index, true));
+              }}
               key={index}
               cardNumber={card.number}
               visible={card.visible}
               flipped={card.flipped}
+              selected={card.selected}
             />
           ))}
           {gameStatus === "finished" && <WinModal />}

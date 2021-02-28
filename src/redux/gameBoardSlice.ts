@@ -6,14 +6,11 @@ import {
   decreaseRemainingCardsNumber,
   increaseMovesCounterValue,
   resetFlippedCards,
-  resumeTimer,
-  setGameInfoData,
   startGame,
   startTimer,
   stopTimer,
 } from "./gameInfoSlice";
-import { setSettings } from "./settingsSlice";
-import { addStatisticRecord, setStatistic } from "./statisticSlice";
+import { addStatisticRecord } from "./statisticSlice";
 import { AppDispatch, AppState } from "./store";
 
 //types
@@ -21,6 +18,7 @@ type CardType = {
   number: string;
   flipped: boolean;
   visible: boolean;
+  selected: boolean;
 };
 
 export type GameBoardState = CardType[];
@@ -47,6 +45,12 @@ export const gameBoardReducer = (state: GameBoardState = initState, action: Game
       return state.map((card, i) => (action.payload === i ? { ...card, flipped: true } : card));
     case "gameBoard/hideCard":
       return state.map((card, i) => (action.payload === i ? { ...card, visible: false } : card));
+    case "gameBoard/selectCard":
+      return state.map((card, i) =>
+        action.payload === i ? { ...card, selected: true } : { ...card, selected: false }
+      );
+    case "gameBoard/resetCardSelection":
+      return state.map((card, i) => ({ ...card, selected: false }));
     default:
       return state;
   }
@@ -63,11 +67,13 @@ export const createGameBoard = (numberOfCards: number) => (dispatch: AppDispatch
       number: cardNum,
       flipped: false,
       visible: true,
+      selected: false,
     });
     gameBoard.push({
       number: cardNum,
       flipped: false,
       visible: true,
+      selected: false,
     });
     i++;
   }
@@ -117,6 +123,7 @@ export const cardClicked = (cardIndex: number, fromUser: boolean) => (
               })
             );
           }
+          dispatch(resetCardSelection());
           victorySound.play();
         } else {
           correctSound.play();
@@ -153,6 +160,7 @@ export const saveGameBoardToLocalStorage = () => (
   dispatch: AppDispatch,
   getState: () => AppState
 ) => {
+  dispatch(resetCardSelection());
   const { gameBoard } = getState();
   if (getState().autoplay.autoplay) {
     localStorage.removeItem("ms-game-board");
@@ -184,12 +192,19 @@ const flipCard = (index: number) => ({ type: "gameBoard/flipCard", payload: inde
 
 const hideCard = (index: number) => ({ type: "gameBoard/hideCard", payload: index } as const);
 
+export const selectCard = (index: number) =>
+  ({ type: "gameBoard/selectCard", payload: index } as const);
+
+export const resetCardSelection = () => ({ type: "gameBoard/resetCardSelection" } as const);
+
 export type GameBoardActions =
   | ReturnType<typeof setGameBoardData>
   | ReturnType<typeof flipAllCards>
   | ReturnType<typeof unFlipAllCards>
   | ReturnType<typeof flipCard>
-  | ReturnType<typeof hideCard>;
+  | ReturnType<typeof hideCard>
+  | ReturnType<typeof selectCard>
+  | ReturnType<typeof resetCardSelection>;
 
 //selectors
 export const getGameBoard = (state: AppState) => state.gameBoard;

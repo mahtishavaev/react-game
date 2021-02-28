@@ -4,15 +4,15 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { getAutoplayStatus } from "../../redux/autoplaySlice";
 
-const CardWrapper = styled.div`
+const CardWrapper = styled.div<{ selected: boolean }>`
   width: 16.6666%;
   padding: 10px;
   perspective: 600px;
+  ${(props) => props.selected && "box-shadow: 0 0 0 2px grey;"}
   @media (max-width: 991.98px) {
     padding: 5px;
   }
   @media (max-width: 767.98px) {
-    /* width: 33.3333%; */
     width: 25%;
   }
 `;
@@ -33,8 +33,8 @@ const CardItem = styled.div<{ flipped?: boolean; visible: boolean; clickable: bo
     height: 110px;
   }
   @media (max-width: 767.98px) {
-    width: 130px;
-    height: 130px;
+    width: 125px;
+    height: 125px;
   }
   @media (max-width: 575.98px) {
     width: 100px;
@@ -56,22 +56,30 @@ type CardPropsType = {
   cardNumber: string;
   flipped: boolean;
   visible: boolean;
+  selected: boolean;
   onClick: () => void;
 };
 
-export const Card: FC<CardPropsType> = React.memo(({ cardNumber, flipped, visible, onClick }) => {
-  const autoplay = useSelector(getAutoplayStatus);
-  return (
-    <CardWrapper>
-      <CardItem flipped={flipped} visible={visible} clickable={!autoplay} onClick={onClick}>
-        <CardImage
-          draggable="false"
-          type="front"
-          src={`/assets/img/cards/image${cardNumber}.png`}
-          alt={`card id: ${cardNumber}`}
-        />
-        <CardImage draggable="false" type="back" src={`/assets/img/cards/back.png`} alt={`back`} />
-      </CardItem>
-    </CardWrapper>
-  );
-});
+export const Card: FC<CardPropsType> = React.memo(
+  ({ cardNumber, flipped, visible, selected, onClick }) => {
+    const autoplay = useSelector(getAutoplayStatus);
+    return (
+      <CardWrapper selected={selected}>
+        <CardItem flipped={flipped} visible={visible} clickable={!autoplay} onClick={onClick}>
+          <CardImage
+            draggable="false"
+            type="front"
+            src={`/assets/img/cards/image${cardNumber}.png`}
+            alt={`card id: ${cardNumber}`}
+          />
+          <CardImage
+            draggable="false"
+            type="back"
+            src={`/assets/img/cards/back.png`}
+            alt={`back`}
+          />
+        </CardItem>
+      </CardWrapper>
+    );
+  }
+);

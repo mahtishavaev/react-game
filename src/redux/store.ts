@@ -4,6 +4,7 @@ import thunk, { ThunkDispatch } from "redux-thunk";
 import { AutoplayActions, AutoplayState } from "./autoplaySlice";
 import { GameBoardState, GameBoardActions } from "./gameBoardSlice";
 import { GameInfoActions, GameInfoState } from "./gameInfoSlice";
+import { KeyboardActions, KeyboardState } from "./keyboardSlice";
 import { rootReducer } from "./rootReducer";
 import { SettingsActions, SettingsState } from "./settingsSlice";
 import { StatisticActions, StatisticState } from "./statisticSlice";
@@ -19,6 +20,7 @@ export type AppState = {
   settings: SettingsState;
   autoplay: AutoplayState;
   statistic: StatisticState;
+  keyboard: KeyboardState;
 };
 
 export type AppActions =
@@ -26,6 +28,7 @@ export type AppActions =
   | GameInfoActions
   | SettingsActions
   | AutoplayActions
-  | StatisticActions;
+  | StatisticActions
+  | KeyboardActions;
 
 export type AppDispatch = ThunkDispatch<AppState, unknown, AppActions>;
