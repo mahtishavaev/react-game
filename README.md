@@ -8,6 +8,12 @@ To clone and run this application, you'll need [Git](https://git-scm.com) and [N
 # Clone this repository
 $ git clone https://github.com/mahtishavaev/react-game.git
 
+# Enter to the project folder
+$ cd react-game
+
+# Checkout to react-game branch
+$ git checkout react-game
+
 # Install dependencies
 $ npm install
 
