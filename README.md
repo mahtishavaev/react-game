@@ -1,3 +1,6 @@
+## Demo
+https://mahtishavaev-react-game.netlify.app/
+
 ## How To Use
 
 <!-- Example: -->
